@@ -1,0 +1,136 @@
+#+title: Final Project Proposal
+#+author: David Lewis
+#+date:<2025-10-30 Thu>
+
+
+* Introduction
+
+** Background
+There are lots of medicines that do different things. It is hard for physicians to
+pick between each of the different medications. Simplifying the list of medications is
+therefore important to patient care.
+
+** Research questions
+- Which medications with the same compositions are the highest rated?
+- How does the usage of the medication correlate with user reviews?
+- How do side effects correlate?
+- How can a physician easily browse for medications?
+
+* Methods
+
+** Data collection
+
+The data were collected from Kaggle using the search term "medicine". The dataset
+is located at the following URL: https://www.kaggle.com/datasets/singhnavjot2062001/11000-medicine-details
+
+** Data Manipulation
+The data was originally a single CSV. There were many "many-to-many" relationships, which I've
+extracted (reverse group-by?) into separate tables.
+
+The Medications table is shown below:
+  
+
+#+begin_src python :results table :exports results
+import sqlite3
+import pandas as pd
+
+con = sqlite3.connect("data/11000-medicines.db")
+df = pd.read_sql_query("select * from Medications", con)
+return(df.drop("Image URL", axis=1).head(11))
+#+end_src
+
+#+RESULTS:
+|    | Medicine Name            | Manufacturer                         | Excellent Review % | Average Review % | Poor Review % |
+|----+--------------------------+--------------------------------------+--------------------+------------------+---------------|
+|  0 | Avastin 400mg Injection  | Roche Products India Pvt Ltd         |                 22 |               56 |            22 |
+|  1 | Augmentin 625 Duo Tablet | Glaxo SmithKline Pharmaceuticals Ltd |                 47 |               35 |            18 |
+|  2 | Azithral 500 Tablet      | Alembic Pharmaceuticals Ltd          |                 39 |               40 |            21 |
+|  3 | Ascoril LS Syrup         | Glenmark Pharmaceuticals Ltd         |                 24 |               41 |            35 |
+|  4 | Aciloc 150 Tablet        | Cadila Pharmaceuticals Ltd           |                 34 |               37 |            29 |
+|  5 | Allegra 120mg Tablet     | Sanofi India Ltd                     |                 35 |               42 |            23 |
+|  6 | Avil 25 Tablet           | Sanofi India Ltd                     |                 40 |               34 |            26 |
+|  7 | Aricep 5 Tablet          | Eisai Pharmaceuticals India Pvt Ltd  |                 43 |               28 |            29 |
+|  8 | Amoxyclav 625 Tablet     | Abbott                               |                 36 |               43 |            21 |
+|  9 | Atarax 25mg Tablet       | Dr Reddy's Laboratories Ltd          |                 35 |               41 |            24 |
+| 10 | Azee 500 Tablet          | Cipla Ltd                            |                 37 |               38 |            25 |
+
+#+begin_quote
+I'm hiding the =Image URL= column here"
+#+end_quote
+
+Some stats from the tables:
+#+begin_src python :session tables :exports none
+import sqlite3
+import pandas as pd
+
+con = sqlite3.connect("data/11000-medicines.db")
+#+end_src
+
+#+RESULTS:
+: None
+
+*** Medications table
+#+begin_src python :exports results :results table :session tables
+df = pd.read_sql_query("select * from Medications", con)
+pd.DataFrame(df.nunique(), columns=["Unique Counts"])
+#+end_src
+
+#+RESULTS:
+|                    | Unique Counts |
+|--------------------+---------------|
+| Medicine Name      |         11498 |
+| Image URL          |         11740 |
+| Manufacturer       |           759 |
+| Excellent Review % |            85 |
+| Average Review %   |            79 |
+| Poor Review %      |            81 |
+
+
+*** Medications Uses Junction table
+#+begin_src python :exports results :session tables :results table
+df = pd.read_sql_query("select * from Medications_Uses", con)
+pd.DataFrame(df.nunique(), columns=["Unique Counts"])
+#+end_src
+
+#+RESULTS:
+|                  | Unique Counts |
+|------------------+---------------|
+| Medicine Uses ID |         17811 |
+| Medicine Name    |         11498 |
+| Use              |           469 |
+
+** SQL queries
+- Joins for Composition/Uses/Side effects tables
+
+** Data analysis
+- Statistical analysis to determine effect of Use/Composition/Side effects on Review
+- Compare reviews of medicines with similar compositions (determine what "similar" means in this context)
+
+** R Packages
+
+*** Statistical packages
+- Tidyverse
+- Plotly
+
+Pretty sure I can do all the statistical analysis I need to without any extra packages. Tidyverse is a family of data manipulation/visualization tools and
+plotly is for interactive visualization.
+
+*** Shiny stuff
+- Shiny
+- Shiny Router
+- Box
+
+Shiny should be self-explanatory, but shiny router and box allow for actual modularization within the R app (i.e. I don't have to store everything in the same file).
+
+
+** Layout
+
+1 tab for non-interactive/interactive data vizualization, another for browsing the data.
+
+
+
+
+** How can the proposed visualizations help answer the research questions?
+
+- The interactive data viewer will help physicians connect medications to symptoms/reviews/etc.
+- Interactive/non interactive visualizations may show how some medications may be really well received by some, but terrible for others
