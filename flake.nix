@@ -28,6 +28,8 @@
         }:
         let
           rPackages = with pkgs.rPackages; [
+            promises
+            future
             languageserver
             shiny_router
             tidyverse
@@ -40,6 +42,9 @@
             box
             bslib
             plotly
+            box_lsp
+            box_linters
+            RSQLite
           ];
           myPy = pkgs.python3.withPackages (
             p: with p; [

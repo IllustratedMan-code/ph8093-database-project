@@ -2,6 +2,7 @@
 #+author: David Lewis
 #+date:<2025-10-30 Thu>
 
+#+export_file_name: FinalProjectProposal_Lewis
 
 * Introduction
 
@@ -99,8 +100,65 @@ pd.DataFrame(df.nunique(), columns=["Unique Counts"])
 | Medicine Name    |         11498 |
 | Use              |           469 |
 
-** SQL queries
-- Joins for Composition/Uses/Side effects tables
+
+** ER diagram
+#+begin_src mermaid :file erdiagram.png
+erDiagram
+    Medications {
+      string Medicine_Name PK
+      string Image_URL
+      string Manufacturer
+      int Excellent_Review_Percent
+      int Average_Review_Percent
+      int Poor_Review_Percent
+    }
+    Medications_Components {
+      string Medicine_Component_ID PK
+      string Medicine_Name FK
+      string Component_Name FK
+      string Amount
+    }
+
+    Components {
+      string Component_Name PK
+    }
+
+    Medications_Uses {
+      string Medicine_Use_ID PK
+      string Medicine_Name FK
+      string Use FK
+    }
+    
+    Uses {
+      string Use PK
+    }
+
+    Medications_Side_effects {
+      string Medicine_Side_effect_ID PK
+      string Medicine_Name FK
+      string Side_effect FK
+    }
+
+    Side_effects {
+      string Side_effect PK 
+    }
+
+    Medications ||--|{ Medications_Uses : ""
+    Uses ||--|{ Medications_Uses : ""
+    Medications ||--|{ Medications_Components : ""
+    Components ||--|{ Medications_Components : ""
+    Medications ||--|{ Medications_Side_effects : ""
+    Side_effects ||--|{ Medications_Side_effects : ""
+    
+#+end_src
+
+#+RESULTS:
+[[file:erdiagram.png]]
+
+This ER diagram makes sense because the original dataset in csv had columns that were
+lists with non-unique elements, i.e. a many-to many relationship. This database takes those
+columns and extracts the columns as their own tables, connecting them via a junction table.
+
 
 ** Data analysis
 - Statistical analysis to determine effect of Use/Composition/Side effects on Review
@@ -123,14 +181,52 @@ plotly is for interactive visualization.
 Shiny should be self-explanatory, but shiny router and box allow for actual modularization within the R app (i.e. I don't have to store everything in the same file).
 
 
+** Interactive Visualizations
+- Searchable histogram (i.e. histogram changes)
+  for each component's dosages
+- Searchable component to review histogram
+  
+
 ** Layout
 
 1 tab for non-interactive/interactive data vizualization, another for browsing the data.
 
+#+begin_quote
+I'm not really sure /which/ plots I'm using yet, but there will be plots on the first page, data browser on the second
+#+end_quote 
+
+
+*** Page 1
+
+[[file:assets/mockup1.svg]]
+
+*** Page 2
 
 
 
-** How can the proposed visualizations help answer the research questions?
+
+[[file:assets/mockup2.png]]
+
+
+
+
+
+** non-interactive visualizations (ggplot/plotly)
+In general, these will be visualizations for the entirety of the data
+- Some sort of scatter plot showing relationships between medications (UMAP/PCA) based
+  on various metrics (need to define similarity metric)
+- Will try to use plotly for everything, since it allows for interactive inspection of points
+
+#+begin_quote
+I have some other ideas for this, but nothing super detailed yet.
+#+end_quote
+
+** Filters
+- I'm not going to filter the data at all, since there is no statistical score to do so with, i.e. p value.
+
+** How proposed visualizations help answer the research questions?
 
 - The interactive data viewer will help physicians connect medications to symptoms/reviews/etc.
 - Interactive/non interactive visualizations may show how some medications may be really well received by some, but terrible for others
+- UMAP/PCA plot may show distinct groups of medicines in terms of side effect, uses, etc. May be able to select alternative medications
+  based on groups.
