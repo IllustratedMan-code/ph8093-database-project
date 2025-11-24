@@ -14,4 +14,16 @@ query <- function(query_string) {
 
 
 #' @export
+distance <- function(med1, med2){
+  
+  }
+
+
+#' @export
+to_sql <- function(vec) {
+  paste0("('", paste(vec, collapse = "', '"), "')")
+}
+
+
+#' @export
 csv <- query("select * from Medications")

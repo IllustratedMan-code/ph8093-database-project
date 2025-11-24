@@ -3,6 +3,7 @@ box::use(shiny.router[...])
 #box::use(bslib[...])
 box::use(app / data_viewer)
 box::use(app / data_utils)
+box::use(app / home)
 
 
 root_page <- div(h2("Root page"))
@@ -37,7 +38,7 @@ ui <- fluidPage(
   #theme = bs_theme(version = 5),
   nav_menu,
   router_ui(
-    route("/", root_page),
+    route("/", home$ui()),
     route("viewer", data_viewer$ui("data_viewer"))
   )
 )
@@ -46,8 +47,10 @@ server <- function(input, output, session) {
   router_server()
   ## remove this later when module is finished (autoreload hack)
   box::reload(data_viewer)
+  box::reload(home)
   box::reload(data_utils)
   data_viewer$server("data_viewer")
+  home$server()
 }
 
 
