@@ -2,13 +2,18 @@ box::use(shiny[...])
 box::use(. / data_utils)
 box::use(utils[...])
 
+# The home page
+
+## Preload data. It has to load anyway, so there isn't a huge cost to doing it this way.
 unique_uses <- nrow(data_utils$query("select * from Uses"))
 unique_side_effects <- nrow(data_utils$query("select * from Side_effects"))
 unique_components <- nrow(data_utils$query("select * from Components"))
 unique_medications <- nrow(data_utils$query("select * from Medications"))
 
+
+## The ui for the page
 ui <- function(id = "home") {
-  ns <- NS(id)
+  ns <- NS(id) ## namespace handling
   fluidPage(
     h1("Data source"),
     tags$ul(tags$li(tags$a("kaggle link", href = "https://www.kaggle.com/datasets/singhnavjot2062001/11000-medicine-details"))),
@@ -29,12 +34,14 @@ ui <- function(id = "home") {
   )
 }
 
+## histogram for a query
 hist_unique <- function(query) {
   table <- data_utils$query(query)
   fig <- plotly::plot_ly(x = table[, 1], type = "histogram")
   fig |> plotly::layout(xaxis = list(showticklabels = F, categoryorder = "total descending"))
 }
 
+## The server for the page. I didn't do anything fancy, since the content is essentially static.
 server <- function(id = "home") {
   moduleServer(
     id,

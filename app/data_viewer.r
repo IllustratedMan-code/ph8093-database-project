@@ -2,12 +2,20 @@ box::use(shiny[...])
 box::use(utils[...])
 box::use(. / data_utils)
 
+# The data viewer page
+
+## I went with a functional design paradigm
+## which isn't always the best when working with data,
+## but the object oriented design in R is
+## terrible and I didn't want to cry (too much).
 
 
+## converts image urls into html image elements
 make_imgs <- function(url) {
   sprintf("<img src='%s' height='100'></img>", url)
 }
 
+## makes a pie chart of the sum of reviews selected by the user
 make_pie <- function(high, med, low) {
   plotly::plot_ly(
     labels = c("Poor Review", "Average Review", "Excellent Review"),
@@ -16,7 +24,7 @@ make_pie <- function(high, med, low) {
   )
 }
 
-
+## query convenience function (is there such a thing as too much abstraction?)
 query_for <- function(names, table, column = "Medicine Name") {
   sql_names <- data_utils$to_sql(names)
   q <- glue::glue("select * from {table} where \"{column}\" in {sql_names}")
@@ -24,7 +32,7 @@ query_for <- function(names, table, column = "Medicine Name") {
   data_utils$query(q)
 }
 
-
+## finds meds that share at least one attribute (i.e. Usage)
 similar_meds <- function(med_names, table, column) {
   selected <- query_for(med_names, table)
   print("nrows")
@@ -33,7 +41,12 @@ similar_meds <- function(med_names, table, column) {
   q[["Medicine Name"]]
 }
 
-
+## makes the interactive scatter plot
+## the scatter plot adds markers when a medicine is selected and provides filters
+## based on the selected medications.
+## This is a slow operation, so I had to use futures, however the async programming
+## paradigm in R is still terrible as there is no easy way to handle fast repetitive calls,
+## all functions are just added to the stack instead of executed immediately.
 make_scatter <- function(highlight, similar_usage = F, similar_side_effect = F, similar_composition = F) {
   is_highlighted <- data_utils$csv[["Medicine Name"]] %in% highlight
   df <- data_utils$csv
@@ -107,8 +120,7 @@ make_scatter <- function(highlight, similar_usage = F, similar_side_effect = F, 
 
 
 
-
-
+## makes the images from the image urls
 #' @export
 html_image <- function(csv) {
   csv["Image URL"] <- lapply(csv["Image URL"], FUN = make_imgs)
@@ -116,6 +128,7 @@ html_image <- function(csv) {
   csv
 }
 
+## The ui of the page (at least shiny supports a little bit of modularization).
 #' @export
 ui <- function(id = "data_viewer") {
   ns <- NS(id)
@@ -142,12 +155,14 @@ ui <- function(id = "data_viewer") {
   )
 }
 
-
+# more query abstraction
 query_selected <- function(rows_selected, table) {
   df <- data_utils$csv[rows_selected, ][["Medicine Name"]]
   query_for(df, table, "Medicine Name")[, -1]
 }
 
+
+## The server function, again ExtendedTask is used to handle multiple calls to scatter without freezing the UI too much. Unfortunately, shiny does not support true async, so you can't interrupt the main loop with input.
 #' @export
 server <- function(id = "data_viewer") {
   moduleServer(

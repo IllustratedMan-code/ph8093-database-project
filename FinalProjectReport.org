@@ -1,0 +1,71 @@
+#+title: Final Project Report
+#+author: David Lewis
+#+date:<2025-12-08 Mon>
+#+bibliography: bibliography.json
+
+
+* Introduction
+
+According to Drugbank, there are around 20,000 unique drugs used in
+the healthcare system. [cite:@StatisticsDrugBankOnline] To contrast,
+the average 20 year old American knows around 40,000 words,
+though not necessarily what each
+word means.[cite:@brysbaertHowManyWords2016] Therefore, if a physician were to learn all of the drug
+names, they would take up around 1/3 of the physician's entire
+vocabulary. Having full comprehension of all 20,000 drugs would likely
+be extremely difficult, if not impossible. Free and open access tools
+typically do not provide interactive visualizations of drug
+relationships.[cite:@knoxDrugBank60DrugBank2024; @WebMDBetterInformation; @RxListInternetDrug] 
+Instead, they may provide comparison charts or articles. [cite:@DrugsComparisonIndex] 
+
+This project explores the development of an interactive tool meant to
+aid physicians in medicine selection and comparison. The tool provides
+interactive visualizations meant to make the comparison of medications
+easier, showing how different medications relate among their
+attributes including: user reviews, composition, side effects, and
+usage.
+
+* Methods
+
+** Data source
+The data were collected from Kaggle using the search term
+"medicine". The collected dataset is entitled "11000 Medicine
+details".[cite:@11000MedicineDetails]
+
+After collection of the data, which were contained within a single csv file, the
+data were processed into an SQLite database using python and the
+pandas package.[cite:@teamPandasdevPandasPandas2025] The database uses the database architecture defined in
+[[fig:erdiagram]]. The database is then queried by the visualization tool,
+an R shiny app.[cite:@Shiny]
+
+The tool was designed to have two web pages, a "home" page, and a "data
+viewer" page. The home page would contain simple statistics and
+visualizations for the data set, including the total number of
+medicines, while the data viewer page would contain an interactive
+browser of the medication, with visualizations that change based on
+which medications are selected from a list. The list would be
+filterable, and multiple medications could be selected at once. A
+simple wireframe mockup is provided in 
+
+
+
+#+caption: Entity relationship diagram showing architecture of generated SQLite database
+#+NAME: fig:erdiagram
+[[./erdiagram.png]]
+
+#+cation: Mockup of shiny app design
+[[file:assets/mockup2.png]]
+
+* Results
+
+A live demo of the shiny app can be found on shinyapps.io at the
+following URL: https://illustratedman-code.shinyapps.io/project/. The
+source code for the project can be found on Github at the following
+URL: https://github.com/IllustratedMan-code/ph8093-database-project. 
+
+
+#+typst: #pagebreak()
+
+* References
+
+#+print_bibliography:

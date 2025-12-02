@@ -5,6 +5,6 @@ account: illustratedman-code
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 15837304
-bundleId: 11070846
+bundleId: 11241584
 url: https://illustratedman-code.shinyapps.io/project/
 version: 1
