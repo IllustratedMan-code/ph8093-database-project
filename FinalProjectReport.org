@@ -76,14 +76,65 @@ following URL: https://illustratedman-code.shinyapps.io/project/. The
 source code for the project can be found on Github at the following
 URL: https://github.com/IllustratedMan-code/ph8093-database-project. 
 
+[[fig:home-1]] is the first section of the home page, showing the
+summary statistics for the dataset as well as a histogram of one of
+the non-numeric variables in the dataset. The histogram is a plotly
+figure, so it can be interacted with by dragging to select specific
+regions, zooming in, etc. Additionally, there is a link to the source
+of the data, which might be helpful for those who want to know more
+about the composition of these data.
 
 #+caption: The first section of the home page
-#+NAME: fig:home1
+#+NAME: fig:home-1
 [[file:assets/home-1.png]]
 
+[[fig:home-2]] shows the second section of the
+home page, two more histograms showing the remaining non-numeric
+variables in the dataset. It should be noted that the medications
+components had the most diversity, with both the largest number of
+unique values, and lowest maximum value. Side effects, on the other
+hand, had the least diversity, with over 6000 medications that had
+nausea as a side effect.
+
+The number of unique values within these non-numeric variables is
+significantly dwarfed by the number of unique medications. It stands
+to reason that there are likely medication that share similar
+non-numeric variables with each other, simply changing the name or
+composition slightly.
+
+
+
+
 #+caption: The second section of the home page
-#+NAME: fig:home1
+#+NAME: fig:home-2
 [[file:assets/home-2.png]]
+
+
+[[fig:data-viewer-1]] shows the first section of the data viewer page. The
+left side of the page is the table of medications. The table shows the
+Medicine name, a photo of the medicine, the manufacturer of the
+medicine, and the only numeric values in the dataset, the review
+percentages. The review ratings are split into three categories, a
+poor, average or excellent review.
+
+On the right side of the page, there is a scatter plot that depicts
+each medication in a semi-3-dimensional way. The poor and average
+review percentages form the x and y axes respectively. The color
+depicts the excellent review percentage. Depicting the medications
+spatially allows one to compare a selected medication with other
+medication that are related in terms of review percentages. This novel
+visualization might allow a physician to compare related medications
+and select an alternative that may accomplish the same result while
+having better review percentages. To further accomplish this, there
+are filters that allow one to filter by similar composition, usage,
+and side effects. For a medication to show up in the filter, it must
+have at least one similar attribute for each checked box.
+
+Additionally, there is a pie chart reiterating the review data listed
+in the table. [[fig:data-viewer-2]] shows a set of tables each showing
+which components, uses, and side effects each selected medications has.
+
+
 
 #+caption: The first section of the data viewer page
 #+NAME: fig:data-viewer-1
@@ -92,6 +143,47 @@ URL: https://github.com/IllustratedMan-code/ph8093-database-project.
 #+caption: The second section of the data viewer page
 #+NAME: fig:data-viewer-2
 [[file:assets/data-viewer-2.png]]
+
+
+* Discussion and Analysis
+This project explores visualizing a large list of medications
+spatially. Specifically, the scatter plot in [[fig:data-viewer-1]]
+provides a way to see the relationship between medications without a
+comparison chart. However, using only reviews to form this spatial
+relationship is limiting, it does not represent similar usage for
+example.  A future direction for this type of visualization might be
+natural language based embeddings that provide a high dimensional
+spatial relationship between different medications. The dataset was
+quite limited when it came to different variables. The database that
+the dataset was scraped from also contains text descriptions of each
+medication, which could be used to create spatial embeddings.
+
+While the dataset does contain a considerable amount of medications,
+more do exist [cite:@StatisticsDrugBankOnline], and more will be
+created every year. A more sophisticated visualization tool would
+actively query web databases to remain up to date.
+
+Shiny is quite limited in flexibility and certain optimizations were
+difficult if not impossible to complete. For example, certain
+expensive operations will freeze the user interface in between inputs. While this
+can be somewhat solved by the futures package, fine tuned control of
+the execution stack can't be controlled from within R. Multiple
+invocations of a function in the current implementation will all
+execute even if the results are not required. So the user interface can still
+freeze under certain circumstances.
+
+In future iterations of this project, shiny and R would be dropped in
+favor of a more powerful and flexible framework and language. For
+example, rust, which has advanced multithreading and asynchronous
+support, could be used by compiling to webassembly.
+
+That being said, the spatial visualization provides an easy-to-use way
+to compare different medications without prior knowledge of said
+medications. Further optimizations would serve to make this
+visualizations more intuitive and useful.
+
+
+
 
 * Response to feedback
 
@@ -127,8 +219,57 @@ what's in each bar.
 This is already supported by plotly, by dragging over the desired
 region.
 
+#+typst: #quote(attribution: [Scott])[
+You have a very interesting and interactive graph that is very small. I would highlight that on the page (make it bigger?) and minimize the pie chart’s placement on the page. 
+#+typst: ]
 
-All other feedback was implemented when possible. 
+The plot is now larger and more prominent on the page.
+
+#+typst: #quote(attribution: [unknown classmate])[
+This application is very useful. By adding proper sections and headings to each table, visualizations can be made more intuitive.
+Does your data have generic medication names as a column? It might be
+nice to include that as part of your table! As well, consider
+combining all three of your tables together in your visualizations.
+#+typst: ]
+
+There are no generic medication names. All columns are represented in
+some way in the app. I did make the table into a tabbed interface, so
+there is less scrolling, but the tables are incompatible with each
+other, so I can't strictly combine them.
+
+
+#+typst: #quote(attribution: [unknown classmate])[
+Cool app! I liked that you got images for these meds embedded into your table. The similarity plot/map is really cool. Maybe the tables that you have down in the bottom could be pie chart/bar charts too?
+#+typst: ]
+
+I'm not really sure how the tables could be represented as bar charts
+or pie charts as most of the time, the usage, composition, etc. are
+unique text names, not numeric values.
+
+
+* Semester Reflection
+
+This semester, I learned a bit more about R shiny than I already
+knew. I was a bit disappointed to learn that my initial impression of
+R shiny turned out to be correct. R is not a well suited language for
+web applications as there is not built-in threading or asynchronous
+support. Debugging shiny applications is almost nightmarish, and
+live-updating the UI didn't seem possible. This is in contrast to
+javascript, where web frameworks are commonplace and
+mature. Javascript also has many design features well suited to web
+development and integrates tightly with the browser. The only advantage to using R over javascript
+for web development tasks is the existing package
+ecosystem. Otherwise, R is a terrible language for running a
+frontend or server with. In the future, I would like to find a
+solution similar to shiny, but in a better language, such as rust.
+
+In terms of databases, I unfortunately did not learn much when it came
+to the traditional relational database model. I did learn some when it
+came to noSQL databases. This section of the class was the most useful
+to me.
+
+
+
 
 #+typst: #pagebreak()
 
