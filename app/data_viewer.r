@@ -137,19 +137,20 @@ ui <- function(id = "data_viewer") {
       column(5, DT::DTOutput(ns("data"), height = "50%")),
       column(
         5,
-        plotly::plotlyOutput(ns("pie_chart")),
+        h2("Click on a medicine in the table to highlight"),
         fluidRow(
-          column(8, plotly::plotlyOutput(ns("scatter_plot"))),
-          column(3, checkboxGroupInput(ns("filters"), label = h3("Filter by"), choices = list(
+          column(8, plotly::plotlyOutput(ns("scatter_plot"), height="60vh")),
+          column(2, checkboxGroupInput(ns("filters"), label = h3("Filter by"), choices = list(
             "Similar Usage" = 1,
             "Similar Side Effects" = 2,
             "Similar Composition" = 3
           )), actionButton(ns("clear"), "Clear Selected"))
         ),
-          DT::DTOutput(ns("usage")),
-          DT::DTOutput(ns("side_effect")),
-          DT::DTOutput(ns("composition"))
-        
+        plotly::plotlyOutput(ns("pie_chart")),
+        tabsetPanel(
+          tabPanel("Usage", DT::DTOutput(ns("usage"))),
+          tabPanel("Side Effects", DT::DTOutput(ns("side_effect"))),
+          tabPanel("Composition", DT::DTOutput(ns("composition"))))
       )
     )
   )

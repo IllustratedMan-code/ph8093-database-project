@@ -28,11 +28,10 @@ distance <- function(med1, med2){
   }
 
 
-
 ## a function to convert R vectors to sql lists for queries
 #' @export
 to_sql <- function(vec) {
-  paste0("('", paste(vec, collapse = "', '"), "')")
+  paste0("(\"", paste(vec, collapse = "\", \""), "\")")
 }
 
 

@@ -45,17 +45,30 @@ medicines, while the data viewer page would contain an interactive
 browser of the medication, with visualizations that change based on
 which medications are selected from a list. The list would be
 filterable, and multiple medications could be selected at once. A
-simple wireframe mockup is provided in 
+simple wireframe mockup is provided in [[fig:mockup]].
 
+To further expand on the layout plan, the home page would contain 3
+histograms that correspond to the available non-numeric variables in
+the dataset. The summary statistics will include the number of unique
+medications in the dataset and number of unique values for non-numeric
+values.
+
+The data viewer page would contain a scatter plot depicting the review
+percentages given in the dataset. The points in the scatter plot would
+represent individual medications and would have filters to handle
+relationships between medications with non-numeric variables.
 
 
 #+caption: Entity relationship diagram showing architecture of generated SQLite database
 #+NAME: fig:erdiagram
 [[./erdiagram.png]]
 
-#+cation: Mockup of shiny app design
-[[file:assets/mockup2.png]]
+#+caption: Mockup of shiny app design
+#+NAME: fig:mockup
+[[file:assets/mockup-final.png]]
 
+
+#+typst: #pagebreak()
 * Results
 
 A live demo of the shiny app can be found on shinyapps.io at the
@@ -63,6 +76,59 @@ following URL: https://illustratedman-code.shinyapps.io/project/. The
 source code for the project can be found on Github at the following
 URL: https://github.com/IllustratedMan-code/ph8093-database-project. 
 
+
+#+caption: The first section of the home page
+#+NAME: fig:home1
+[[file:assets/home-1.png]]
+
+#+caption: The second section of the home page
+#+NAME: fig:home1
+[[file:assets/home-2.png]]
+
+#+caption: The first section of the data viewer page
+#+NAME: fig:data-viewer-1
+[[file:assets/data-viewer-1.png]]
+
+#+caption: The second section of the data viewer page
+#+NAME: fig:data-viewer-2
+[[file:assets/data-viewer-2.png]]
+
+* Response to feedback
+
+#+typst: #quote(attribution: [Jason])[
+
+I recommend removing the medication images, ... you may also add
+Therapeutic and Pharmaceutical classes as filters ...
+
+#+typst: ]
+
+
+I'm not going to remove the images because one of the class comments
+actually preferred it with the images, so seems the feedback is split
+on this point. Additionally, I do not have any data for additional
+classifications of the medications. All variables are represented in
+the visualizations/tables.
+
+#+typst: #quote(attribution: [unknown classmate])[
+... By adding proper sections and heading to each table,
+visualizations can be made more intuitive. ...
+#+typst: ]
+
+I wasn't exactly sure what to write for each section, though I did add
+directions to get a user started in the data viewer. The home page
+already had section labels.
+
+#+typst: #quote(attribution: [unknown classmate])[
+... could you filter the top X so that it's easier to have and see
+what's in each bar.
+#+typst: ]
+
+
+This is already supported by plotly, by dragging over the desired
+region.
+
+
+All other feedback was implemented when possible. 
 
 #+typst: #pagebreak()
 
